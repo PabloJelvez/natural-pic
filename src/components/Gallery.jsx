@@ -1,33 +1,36 @@
-// import photos from "../../public/photos.json";
-import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { PhotosContext } from "../context/PhotosContext";
+import IconHeart from "./IconHeart";
 
 const Gallery = () => {
-const [photos, setPhotos] = useState([])
-const photo_url = "/photos.json";
+const {photos, setPhotos} = useContext(PhotosContext);
 
-const getData = async () => {
- const response = await fetch(photo_url);
- const data = await response.json();
- setPhotos(data.photos);
-
-}
-useEffect(() => {
-  getData();
-}, []);
-
-
+const addFavorite = (id) => {
+const newPhotos = photos.map((photo) =>{
+  if (photo.id === id) {
+    return{
+      ...photo,
+      liked: !photo.liked,
+    };
+  }
+  return photo;
+});
+setPhotos(newPhotos);
+};
 
   return (
     <div className="gallery grid-columns-5 p-3">
-     {photos.map(photo => (
-      <div className="photo-container">
-      <img
+     {photos.map((photo, i) => (
+      <div
+      onClick={() => addFavorite(photo.id)}
       className="photo"
-      key={photo.id}
-      src={photo.src.tiny}
-      alt={photo.alt}
-      />
-      <p className="caption">
+      style={{backgroundImage: `url(${photo.src.tiny})`}}
+      key={i}
+      >
+      <IconHeart filled={photo.liked} />
+      
+  
+      <p className="">
       {photo.alt}
       </p>
       </div>
